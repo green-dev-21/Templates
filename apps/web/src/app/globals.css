@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary: 15 118 110; /* Teal 700 */
+    --primary-foreground: 255 255 255;
+    --background: 255 255 255;
+    --foreground: 15 23 42;
+  }
+
+  .theme-kickshop {
+    --primary: 220 38 38; /* Red 600 - Sporty */
+  }
+
+  .theme-threadsstore {
+    --primary: 79 70 229; /* Indigo 600 - Fashion */
+  }
+
+  .theme-gadgetzone {
+    --primary: 37 99 235; /* Blue 600 - Tech */
+  }
+
+  .theme-grocercart {
+    --primary: 22 163 74; /* Green 600 - Fresh */
+  }
+
+  .theme-beautybliss {
+    --primary: 219 39 119; /* Pink 600 - Beauty */
+  }
+
+  .theme-homedecor {
+    --primary: 180 83 9; /* Amber 700 - Home */
+  }
+
+  .theme-toyworld {
+    --primary: 245 158 11; /* Orange 500 - Toys */
+  }
+
+  .theme-petsupply {
+    --primary: 124 58 237; /* Violet 600 - Pets */
+  }
+}
+
+@layer utilities {
+  .text-primary {
+    color: rgb(var(--primary));
+  }
+  .bg-primary {
+    background-color: rgb(var(--primary));
+  }
+  .border-primary {
+    border-color: rgb(var(--primary));
+  }
+  .from-primary {
+    --tw-gradient-from: rgb(var(--primary)) var(--tw-gradient-from-position);
+    --tw-gradient-to: rgb(var(--primary) / 0) var(--tw-gradient-to-position);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  }
+}
+
+/* RTL Support */
+[dir="rtl"] {
+  text-align: right;
+}
