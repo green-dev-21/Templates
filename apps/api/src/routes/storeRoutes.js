@@ -33,14 +33,12 @@ router.post('/delivery-check', async (req, res) => {
   try {
     const { pincode } = req.body;
     const zone = await DeliveryZone.findOne({
-      $or: [
-        { pincodes: pincode },
-        { pincodeRanges: { $elemMatch: { min: { $lte: pincode }, max: { $gte: pincode } } } }
-      ]
+      pincodes: pincode,
+      isActive: true
     });
 
     if (zone) {
-      res.json({ success: true, available: true, deliveryFee: zone.deliveryFee });
+      res.json({ success: true, available: true, deliveryCharge: zone.deliveryCharge });
     } else {
       res.json({ success: true, available: false });
     }
@@ -68,13 +66,35 @@ router.post('/validate-coupon', async (req, res) => {
 // Create Order
 router.post('/order', async (req, res) => {
   try {
+    const { customer, items, totalAmount, paymentMethod } = req.body;
+
     const orderData = {
-      ...req.body,
-      orderId: 'ORD-' + Math.random().toString(36).substr(2, 9).toUpperCase()
+      orderNumber: 'ORD-' + Math.random().toString(36).substr(2, 9).toUpperCase(),
+      customer: {
+        name: customer.name,
+        phone: customer.phone,
+        address: customer.address,
+        city: customer.city,
+        pincode: customer.pincode
+      },
+      items: items.map(item => ({
+        productId: item.product,
+        productName: item.name,
+        quantity: item.quantity,
+        unitPrice: item.price,
+        totalPrice: item.price * item.quantity
+      })),
+      subtotal: totalAmount, // Simplification for now
+      total: totalAmount,
+      paymentMethod: paymentMethod.toLowerCase() === 'upi' ? 'upi' :
+                     paymentMethod.toLowerCase() === 'cod' ? 'cod' :
+                     paymentMethod.toLowerCase() === 'bank' ? 'bank_transfer' : 'cod'
     };
+
     const order = await Order.create(orderData);
     res.status(201).json(order);
   } catch (error) {
+    console.error('Order creation error:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 });

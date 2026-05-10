@@ -17,21 +17,20 @@ export default function HomePage() {
     queryFn: () => storefrontApi.getCategories(),
   });
 
-  const { data: bannersData } = useQuery({
+  const { data: bannersResponse } = useQuery({
     queryKey: ['banners'],
     queryFn: () => storefrontApi.getBanners(),
   });
 
   const products = productsData?.data?.products || [];
   const categories = categoriesData?.data || [];
-  const banners = bannersData?.data || [];
+  const banners = bannersResponse?.data || [];
 
   return (
     <div className="space-y-8">
       {/* Hero Banner */}
       {banners.length > 0 ? (
         <div className="w-full aspect-[2/1] md:aspect-[3/1] bg-gray-200 rounded-xl overflow-hidden relative">
-          {/* In a real app we'd use a swiper here, but for now showing the first one */}
           <img
             src={banners[0].imageUrl}
             alt={banners[0].title}
