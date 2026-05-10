@@ -22,7 +22,7 @@ const { protect, authorize } = require('../middleware/auth');
 
 // All admin routes are protected
 router.use(protect);
-router.use(authorize('admin'));
+router.use(authorize('owner', 'manager', 'staff'));
 
 router.get('/dashboard/stats', getStats);
 

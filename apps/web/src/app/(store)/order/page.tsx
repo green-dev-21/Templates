@@ -7,6 +7,7 @@ import { storefrontApi } from '@/lib/api';
 import { buildWhatsAppMessage, redirectToWhatsApp } from '@/lib/whatsapp';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 
 export default function OrderPage() {
   const { items, total, clearCart } = useCart();
@@ -20,6 +21,13 @@ export default function OrderPage() {
     pincode: '',
     paymentMethod: 'UPI',
   });
+
+  const { data: settingsResponse } = useQuery({
+    queryKey: ['store-settings'],
+    queryFn: () => storefrontApi.getStoreSettings(),
+  });
+
+  const storeSettings = settingsResponse?.data;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -61,8 +69,7 @@ export default function OrderPage() {
         paymentMethod: order.paymentMethod,
       });
 
-      // We'd get the store phone from settings, but hardcoding for now
-      const storePhone = '919876543210';
+      const storePhone = storeSettings?.whatsappNumber || '919876543210';
 
       redirectToWhatsApp(storePhone, message);
 

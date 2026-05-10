@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -29,7 +29,7 @@ export const storefrontApi = {
   getCategories: () => api.get('/categories'),
   getCategoryBySlug: (slug: string) => api.get(`/categories/${slug}`),
   getStoreSettings: () => api.get('/store/settings'),
-  getBanners: () => api.get('/admin/banners'), // Corrected to admin for now as we'll add route
+  getBanners: () => api.get('/store/banners'),
   checkDelivery: (pincode: string) => api.post('/store/delivery-check', { pincode }),
   validateCoupon: (code: string) => api.post('/store/validate-coupon', { code }),
   createOrder: (orderData: any) => api.post('/store/order', orderData),
