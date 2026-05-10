@@ -2,8 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-interface CartItem {
-  productId: string;
+export interface CartItem {
+  id: string;
   name: string;
   image: string;
   variant: string;
@@ -14,8 +14,8 @@ interface CartItem {
 interface CartContextType {
   items: CartItem[];
   addItem: (item: CartItem) => void;
-  removeItem: (productId: string, variant: string) => void;
-  updateQuantity: (productId: string, variant: string, qty: number) => void;
+  removeItem: (id: string, variant?: string) => void;
+  updateQuantity: (id: string, qty: number, variant?: string) => void;
   clearCart: () => void;
   total: number;
   itemCount: number;
@@ -29,7 +29,11 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
-      setItems(JSON.parse(savedCart));
+      try {
+        setItems(JSON.parse(savedCart));
+      } catch (e) {
+        console.error('Failed to parse cart', e);
+      }
     }
   }, []);
 
@@ -40,7 +44,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const addItem = (newItem: CartItem) => {
     setItems((prevItems) => {
       const existingItemIndex = prevItems.findIndex(
-        (item) => item.productId === newItem.productId && item.variant === newItem.variant
+        (item) => item.id === newItem.id && item.variant === newItem.variant
       );
 
       if (existingItemIndex > -1) {
@@ -53,17 +57,17 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
-  const removeItem = (productId: string, variant: string) => {
+  const removeItem = (id: string, variant: string = '') => {
     setItems((prevItems) =>
-      prevItems.filter((item) => !(item.productId === productId && item.variant === variant))
+      prevItems.filter((item) => !(item.id === id && item.variant === variant))
     );
   };
 
-  const updateQuantity = (productId: string, variant: string, qty: number) => {
+  const updateQuantity = (id: string, qty: number, variant: string = '') => {
     if (qty < 1) return;
     setItems((prevItems) =>
       prevItems.map((item) =>
-        item.productId === productId && item.variant === variant
+        item.id === id && item.variant === variant
           ? { ...item, quantity: qty }
           : item
       )

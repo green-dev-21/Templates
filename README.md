@@ -30,7 +30,7 @@ cd whatsapp-commerce-template
 
 ### 2. Install dependencies
 ```bash
-npm install
+pnpm install
 ```
 
 ### 3. Setup Environment Variables
@@ -39,13 +39,13 @@ Create a `.env` file in `apps/api` based on `apps/api/.env.example`.
 ### 4. Seed the Database
 ```bash
 cd apps/api
-npm run seed
+pnpm run seed
 ```
 
 ### 5. Run Development Servers
 ```bash
 # From root
-npm run dev
+pnpm run dev
 ```
 
 The Storefront will be at `http://localhost:3000` and the Admin Panel at `http://localhost:3000/admin/dashboard`.
@@ -57,6 +57,10 @@ Switch themes by adding the theme class to the body or parent element in `apps/w
 - `theme-threadsstore` (Clothing)
 - `theme-gadgetzone` (Electronics)
 - `theme-grocercart` (Grocery)
+- `theme-beautybliss` (Beauty)
+- `theme-homedecor` (Home Decor)
+- `theme-toyworld` (Toys)
+- `theme-petsupply` (Pets)
 
 ## 📄 License
 

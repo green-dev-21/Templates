@@ -1,9 +1,8 @@
-'use client';
-
 import React from 'react';
+import Link from 'next/link';
+import { Plus, Search, Filter, Edit, Trash2, Loader2 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminApi } from '@/lib/api';
-import { Plus, Search, Filter, Edit, Trash2, Loader2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 export default function AdminProductsPage() {
@@ -18,19 +17,10 @@ export default function AdminProductsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-products'] });
       toast.success('Product deleted');
-    },
-    onError: () => {
-      toast.error('Failed to delete product');
     }
   });
 
   const products = response?.data?.products || [];
-
-  const handleDelete = (id: string) => {
-    if (window.confirm('Are you sure you want to delete this product?')) {
-      deleteMutation.mutate(id);
-    }
-  };
 
   return (
     <div className="space-y-8">
@@ -81,17 +71,20 @@ export default function AdminProductsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {products.length > 0 ? products.map((product: any) => (
+                {products.map((product: any) => (
                   <tr key={product._id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gray-100 rounded-lg overflow-hidden">
-                          {product.images?.[0] && <img src={product.images[0]} alt="" className="w-full h-full object-cover" />}
+                          {product.images?.[0] && (
+                             /* eslint-disable-next-line @next/next/no-img-element */
+                             <img src={product.images[0]} alt="" className="w-full h-full object-cover" />
+                          )}
                         </div>
                         <span className="font-medium text-gray-900">{product.name}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">{product.category?.name || 'N/A'}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500">{product.categoryId?.name}</td>
                     <td className="px-6 py-4 text-sm font-bold text-gray-900">₹{product.price}</td>
                     <td className="px-6 py-4 text-sm text-gray-500">{product.stock}</td>
                     <td className="px-6 py-4">
@@ -105,7 +98,7 @@ export default function AdminProductsPage() {
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => handleDelete(product._id)}
+                          onClick={() => deleteMutation.mutate(product._id)}
                           className="p-2 text-gray-400 hover:text-red-500 transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -113,11 +106,7 @@ export default function AdminProductsPage() {
                       </div>
                     </td>
                   </tr>
-                )) : (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-10 text-center text-gray-500">No products found.</td>
-                  </tr>
-                )}
+                ))}
               </tbody>
             </table>
           )}
