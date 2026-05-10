@@ -12,7 +12,7 @@ export default function CategoriesPage() {
     queryFn: () => storefrontApi.getCategories(),
   });
 
-  const categories = response?.data || [];
+  const categories = response?.data?.data || [];
 
   return (
     <div className="space-y-8">

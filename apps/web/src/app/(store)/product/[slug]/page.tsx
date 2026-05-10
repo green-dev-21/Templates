@@ -27,7 +27,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
     );
   }
 
-  const product = productResponse?.data;
+  const product = productResponse?.data?.data;
 
   if (!product) {
     return <div className="text-center py-20">Product not found.</div>;
@@ -40,7 +40,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
       price: product.price,
       image: product.images?.[0] || '',
       quantity: 1,
-      variant: '' // Support for actual variants can be added later
+      variant: ''
     });
     toast.success('Added to cart!');
   };
@@ -51,7 +51,6 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-      {/* Image Gallery */}
       <div className="space-y-4">
         <div className="aspect-square bg-gray-200 rounded-xl overflow-hidden relative">
           {product.images?.length > 0 ? (
@@ -75,7 +74,6 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
         </div>
       </div>
 
-      {/* Product Info */}
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">{product.name}</h1>
@@ -103,8 +101,6 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
         <p className="text-gray-600 leading-relaxed">
           {product.description}
         </p>
-
-        {/* Support for variants can be added back if backend supports it */}
 
         <div className="flex flex-col sm:flex-row gap-4 pt-4">
           <button

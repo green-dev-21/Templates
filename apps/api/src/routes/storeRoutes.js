@@ -38,9 +38,9 @@ router.post('/delivery-check', async (req, res) => {
     });
 
     if (zone) {
-      res.json({ success: true, available: true, deliveryCharge: zone.deliveryCharge });
+      res.json({ success: true, data: { available: true, deliveryCharge: zone.deliveryCharge } });
     } else {
-      res.json({ success: true, available: false });
+      res.json({ success: true, data: { available: false } });
     }
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -84,15 +84,15 @@ router.post('/order', async (req, res) => {
         unitPrice: item.price,
         totalPrice: item.price * item.quantity
       })),
-      subtotal: totalAmount, // Simplification for now
+      subtotal: totalAmount,
       total: totalAmount,
-      paymentMethod: paymentMethod.toLowerCase() === 'upi' ? 'upi' :
-                     paymentMethod.toLowerCase() === 'cod' ? 'cod' :
-                     paymentMethod.toLowerCase() === 'bank' ? 'bank_transfer' : 'cod'
+      paymentMethod: (paymentMethod || 'cod').toLowerCase() === 'upi' ? 'upi' :
+                     (paymentMethod || 'cod').toLowerCase() === 'cod' ? 'cod' :
+                     (paymentMethod || 'cod').toLowerCase() === 'bank' ? 'bank_transfer' : 'cod'
     };
 
     const order = await Order.create(orderData);
-    res.status(201).json(order);
+    res.status(201).json({ success: true, data: order });
   } catch (error) {
     console.error('Order creation error:', error);
     res.status(500).json({ success: false, message: error.message });
