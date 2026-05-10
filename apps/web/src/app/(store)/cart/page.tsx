@@ -17,7 +17,7 @@ export default function CartPage() {
           <ShoppingBag className="w-12 h-12 text-gray-400" />
         </div>
         <h2 className="text-xl font-bold text-gray-900">Your cart is empty</h2>
-        <p className="text-gray-500">Looks like you haven't added anything yet.</p>
+        <p className="text-gray-500">Looks like you haven&apos;t added anything yet.</p>
         <Link
           href="/"
           className="bg-primary text-white px-8 py-3 rounded-xl font-bold hover:bg-primary/90 transition-colors"
@@ -35,9 +35,10 @@ export default function CartPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-4">
           {items.map((item) => (
-            <div key={item.id} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex gap-4">
+            <div key={`${item.id}-${item.variant}`} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex gap-4">
               <div className="w-24 h-24 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0">
                 {item.image ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
                   <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-400">No Image</div>
@@ -50,7 +51,7 @@ export default function CartPage() {
                     {item.variant && <p className="text-sm text-gray-500">{item.variant}</p>}
                   </div>
                   <button
-                    onClick={() => removeItem(item.id)}
+                    onClick={() => removeItem(item.id, item.variant)}
                     className="text-gray-400 hover:text-red-500 transition-colors"
                   >
                     <Trash2 className="w-5 h-5" />
@@ -59,14 +60,14 @@ export default function CartPage() {
                 <div className="flex justify-between items-center mt-2">
                   <div className="flex items-center border border-gray-200 rounded-lg">
                     <button
-                      onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
+                      onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1), item.variant)}
                       className="px-3 py-1 text-gray-500 hover:bg-gray-50"
                     >
                       -
                     </button>
                     <span className="px-3 py-1 font-bold text-sm">{item.quantity}</span>
                     <button
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                      onClick={() => updateQuantity(item.id, item.quantity + 1, item.variant)}
                       className="px-3 py-1 text-gray-500 hover:bg-gray-50"
                     >
                       +

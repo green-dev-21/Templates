@@ -18,19 +18,10 @@ export default function AdminCategoriesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
       toast.success('Category deleted');
-    },
-    onError: () => {
-      toast.error('Failed to delete category');
     }
   });
 
-  const categories = response?.data || [];
-
-  const handleDelete = (id: string) => {
-    if (window.confirm('Are you sure you want to delete this category?')) {
-      deleteMutation.mutate(id);
-    }
-  };
+  const categories = response?.data?.data || [];
 
   return (
     <div className="space-y-8">
@@ -51,14 +42,17 @@ export default function AdminCategoriesPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4">
-          {categories.length > 0 ? categories.map((category: any) => (
+          {categories.map((category: any) => (
             <div key={category._id} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between group">
               <div className="flex items-center gap-4">
                 <div className="text-gray-300 cursor-move">
                   <GripVertical className="w-5 h-5" />
                 </div>
                 <div className="w-12 h-12 bg-gray-100 rounded-xl flex-shrink-0 overflow-hidden">
-                  {category.imageUrl && <img src={category.imageUrl} alt="" className="w-full h-full object-cover" />}
+                  {category.imageUrl && (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img src={category.imageUrl} alt="" className="w-full h-full object-cover" />
+                  )}
                 </div>
                 <div>
                   <h3 className="font-bold text-gray-900">{category.name}</h3>
@@ -70,16 +64,14 @@ export default function AdminCategoriesPage() {
                   <Edit className="w-5 h-5" />
                 </button>
                 <button
-                  onClick={() => handleDelete(category._id)}
+                  onClick={() => deleteMutation.mutate(category._id)}
                   className="p-2 text-gray-400 hover:text-red-500 transition-colors"
                 >
                   <Trash2 className="w-5 h-5" />
                 </button>
               </div>
             </div>
-          )) : (
-            <div className="text-center py-10 text-gray-500">No categories found.</div>
-          )}
+          ))}
         </div>
       )}
     </div>
