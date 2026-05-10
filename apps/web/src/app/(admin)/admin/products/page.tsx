@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
 import { Plus, Search, Filter, Edit, Trash2, Loader2 } from 'lucide-react';

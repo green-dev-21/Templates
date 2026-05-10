@@ -7,12 +7,12 @@ import ProductGrid from '@/components/catalog/ProductGrid';
 import CategoryScrollRow from '@/components/catalog/CategoryScrollRow';
 
 export default function HomePage() {
-  const { data: productsData, isLoading: productsLoading } = useQuery({
+  const { data: productsResponse, isLoading: productsLoading } = useQuery({
     queryKey: ['products'],
     queryFn: () => storefrontApi.getProducts({ featured: true }),
   });
 
-  const { data: categoriesData, isLoading: categoriesLoading } = useQuery({
+  const { data: categoriesResponse, isLoading: categoriesLoading } = useQuery({
     queryKey: ['categories'],
     queryFn: () => storefrontApi.getCategories(),
   });
@@ -22,9 +22,9 @@ export default function HomePage() {
     queryFn: () => storefrontApi.getBanners(),
   });
 
-  const products = productsData?.data?.products || [];
-  const categories = categoriesData?.data || [];
-  const banners = bannersResponse?.data || [];
+  const products = productsResponse?.data?.products || [];
+  const categories = categoriesResponse?.data?.data || [];
+  const banners = bannersResponse?.data?.data || [];
 
   return (
     <div className="space-y-8">
