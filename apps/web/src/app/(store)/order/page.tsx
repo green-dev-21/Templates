@@ -27,7 +27,7 @@ export default function OrderPage() {
     queryFn: () => storefrontApi.getStoreSettings(),
   });
 
-  const storeSettings = settingsResponse?.data;
+  const storeSettings = settingsResponse?.data?.data;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -56,16 +56,22 @@ export default function OrderPage() {
       };
 
       const response = await storefrontApi.createOrder(orderData);
-      const order = response.data;
+      const order = response.data.data;
 
       toast.success('Order created successfully!');
 
       // Build WhatsApp message and redirect
       const message = buildWhatsAppMessage({
-        orderId: order.orderId,
-        items: order.items,
-        total: order.totalAmount,
-        customer: order.customer,
+        orderId: order.orderNumber,
+        items: order.items.map((i: any) => ({ name: i.productName, price: i.unitPrice, quantity: i.quantity })),
+        total: order.total,
+        customer: {
+           name: order.customer.name,
+           phone: order.customer.phone,
+           address: order.customer.address,
+           city: order.customer.city,
+           pincode: order.customer.pincode
+        },
         paymentMethod: order.paymentMethod,
       });
 

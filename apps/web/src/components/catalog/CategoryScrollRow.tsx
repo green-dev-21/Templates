@@ -9,12 +9,11 @@ interface CategoryScrollRowProps {
 const CategoryScrollRow = ({ categories, activeSlug }: CategoryScrollRowProps) => {
   return (
     <div className="flex items-center gap-2 overflow-x-auto pb-4 no-scrollbar">
-      <CategoryChip name="All" slug="" isActive={!activeSlug} />
+      <CategoryChip category={{ name: 'All', slug: '' }} isActive={!activeSlug} />
       {categories.map((category) => (
         <CategoryChip
           key={category.slug}
-          name={category.name}
-          slug={category.slug}
+          category={category}
           isActive={category.slug === activeSlug}
         />
       ))}
