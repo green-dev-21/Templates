@@ -1,57 +1,83 @@
+'use client';
+
 import React from 'react';
-import { MoreVertical, MessageCircle, Truck, CheckCircle2 } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { adminApi } from '@/lib/api';
+import { Loader2 } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 export default function AdminOrdersPage() {
-  const columns = [
-    { title: 'New', count: 3, color: 'border-blue-500' },
-    { title: 'Confirmed', count: 2, color: 'border-purple-500' },
-    { title: 'Packed', count: 1, color: 'border-yellow-500' },
-    { title: 'Shipped', count: 4, color: 'border-orange-500' },
-    { title: 'Delivered', count: 8, color: 'border-green-500' },
-  ];
+  const queryClient = useQueryClient();
+  const { data: response, isLoading } = useQuery({
+    queryKey: ['admin-orders'],
+    queryFn: () => adminApi.getOrders(),
+  });
+
+  const updateStatusMutation = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: string }) =>
+      adminApi.updateOrderStatus(id, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
+      toast.success('Order status updated');
+    }
+  });
+
+  const orders = response?.data || [];
 
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Orders</h1>
-        <p className="text-gray-500">Track and manage your customer orders</p>
+        <p className="text-gray-500">Manage customer orders</p>
       </div>
 
-      <div className="flex gap-6 overflow-x-auto pb-4 no-scrollbar">
-        {columns.map((column) => (
-          <div key={column.title} className="flex-shrink-0 w-80 space-y-4">
-            <div className={`flex items-center justify-between p-4 bg-white rounded-xl border-l-4 ${column.color} shadow-sm`}>
-              <h3 className="font-bold text-gray-900">{column.title}</h3>
-              <span className="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded-full">{column.count}</span>
-            </div>
-
-            <div className="space-y-3">
-              {[1, 2].map((i) => (
-                <div key={i} className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm space-y-3 group">
-                  <div className="flex justify-between items-start">
-                    <span className="text-xs font-bold text-gray-400">#WA-102{i}</span>
-                    <button className="text-gray-300 hover:text-gray-600">
-                      <MoreVertical className="w-4 h-4" />
-                    </button>
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-gray-900 text-sm">Customer Name</h4>
-                    <p className="text-xs text-gray-500">2 Items • ₹1,499</p>
-                  </div>
-                  <div className="flex items-center gap-2 pt-2 border-t border-gray-50">
-                    <button className="flex-1 flex items-center justify-center gap-1 bg-green-50 text-green-600 py-2 rounded-lg text-[10px] font-bold uppercase hover:bg-green-100">
-                      <MessageCircle className="w-3 h-3" />
-                      Chat
-                    </button>
-                    <button className="flex-1 flex items-center justify-center gap-1 bg-gray-50 text-gray-600 py-2 rounded-lg text-[10px] font-bold uppercase hover:bg-gray-100">
-                      Next Step
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        {isLoading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
-        ))}
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="bg-gray-50 text-xs font-semibold text-gray-500 uppercase">
+                <tr>
+                  <th className="px-6 py-4">Order ID</th>
+                  <th className="px-6 py-4">Customer</th>
+                  <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4">Total</th>
+                  <th className="px-6 py-4">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {orders.map((order: any) => (
+                  <tr key={order._id}>
+                    <td className="px-6 py-4 font-medium">#{order.orderNumber}</td>
+                    <td className="px-6 py-4">{order.customer?.name}</td>
+                    <td className="px-6 py-4">
+                      <span className="px-2 py-1 bg-blue-100 text-blue-700 text-[10px] font-bold rounded-full uppercase">
+                        {order.orderStatus}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 font-bold">₹{order.total}</td>
+                    <td className="px-6 py-4">
+                      <select
+                        className="text-xs border rounded p-1"
+                        value={order.orderStatus}
+                        onChange={(e) => updateStatusMutation.mutate({ id: order._id, status: e.target.value })}
+                      >
+                        <option value="new">New</option>
+                        <option value="confirmed">Confirm</option>
+                        <option value="shipped">Ship</option>
+                        <option value="delivered">Deliver</option>
+                        <option value="cancelled">Cancel</option>
+                      </select>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );
