@@ -1,14 +1,16 @@
 # Use Node.js LTS version
 FROM node:18-alpine
 
+# Install pnpm
+RUN npm install -g pnpm
+
 # Create app directory
 WORKDIR /usr/src/app
 
 # Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-COPY package*.json ./
+COPY package.json pnpm-lock.yaml* ./
 
-RUN npm install --omit=dev
+RUN pnpm install --prod
 
 # Bundle app source
 COPY . .
@@ -17,4 +19,4 @@ COPY . .
 EXPOSE 5000
 
 # Command to run the app
-CMD [ "npm", "start" ]
+CMD [ "pnpm", "start" ]

@@ -22,7 +22,7 @@ export default function AdminOrdersPage() {
     }
   });
 
-  const orders = response?.data || [];
+  const orders = response?.data?.data || [];
 
   return (
     <div className="space-y-8">
@@ -41,7 +41,7 @@ export default function AdminOrdersPage() {
             <table className="w-full text-left">
               <thead className="bg-gray-50 text-xs font-semibold text-gray-500 uppercase">
                 <tr>
-                  <th className="px-6 py-4">Order ID</th>
+                  <th className="px-6 py-4">Order Number</th>
                   <th className="px-6 py-4">Customer</th>
                   <th className="px-6 py-4">Status</th>
                   <th className="px-6 py-4">Total</th>
