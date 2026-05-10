@@ -6,12 +6,23 @@ const Order = require('../models/Order');
 const StoreSettings = require('../models/StoreSettings');
 const Coupon = require('../models/Coupon');
 const DeliveryZone = require('../models/DeliveryZone');
+const Banner = require('../models/Banner');
 
 // Get Store Settings
 router.get('/settings', async (req, res) => {
   try {
     const settings = await StoreSettings.findOne();
     res.json({ success: true, data: settings });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// Get Banners (Public)
+router.get('/banners', async (req, res) => {
+  try {
+    const banners = await Banner.find({ isActive: true });
+    res.json({ success: true, data: banners });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -62,7 +73,7 @@ router.post('/order', async (req, res) => {
       orderId: 'ORD-' + Math.random().toString(36).substr(2, 9).toUpperCase()
     };
     const order = await Order.create(orderData);
-    res.status(201).json(order); // Return full order object for frontend
+    res.status(201).json(order);
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

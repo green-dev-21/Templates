@@ -3,6 +3,7 @@ const Product = require('../src/models/Product');
 const Category = require('../src/models/Category');
 const StoreSettings = require('../src/models/StoreSettings');
 const User = require('../src/models/User');
+const Banner = require('../src/models/Banner');
 require('dotenv').config();
 
 const seedData = async () => {
@@ -15,55 +16,66 @@ const seedData = async () => {
     await Category.deleteMany({});
     await StoreSettings.deleteMany({});
     await User.deleteMany({});
+    await Banner.deleteMany({});
 
     // Create Admin User
     await User.create({
       name: 'Admin User',
       email: 'admin@demo.com',
-      password: 'admin123', // Will be hashed by pre-save hook
+      password: 'admin123',
       role: 'owner'
     });
 
     // Create Store Settings
     await StoreSettings.create({
-      storeName: 'Riya Footwear',
-      tagline: 'Trendy Shoes at Wholesale Prices',
-      whatsappNumber: '+919876543210',
+      storeName: 'NicheCommerce Store',
+      tagline: 'All your needs in one place',
+      whatsappNumber: '919876543210',
       currency: { code: 'INR', symbol: '₹', position: 'before' },
-      theme: { primaryColor: '#FF3D00', secondaryColor: '#212121', accentColor: '#FFD600' }
+      theme: { primaryColor: '#22c55e', secondaryColor: '#1e293b', accentColor: '#3b82f6' }
     });
 
-    // Create Categories
-    const cat1 = await Category.create({ name: 'Mens Shoes', slug: 'mens-shoes', isActive: true });
-    const cat2 = await Category.create({ name: 'Womens Shoes', slug: 'womens-shoes', isActive: true });
-
-    // Create Products
-    await Product.create([
-      {
-        name: 'Nike Air Max 270',
-        slug: 'nike-air-max-270',
-        price: 4999,
-        originalPrice: 7999,
-        categoryId: cat1._id,
-        images: ['https://images.unsplash.com/photo-1542291026-7eec264c27ff'],
-        isFeatured: true,
-        stock: 15,
-        isActive: true
-      },
-      {
-        name: 'Adidas Ultraboost',
-        slug: 'adidas-ultraboost',
-        price: 5999,
-        originalPrice: 9999,
-        categoryId: cat1._id,
-        images: ['https://images.unsplash.com/photo-1587563871167-1ee9c731aefb'],
-        isNewArrival: true,
-        stock: 10,
-        isActive: true
-      }
+    // Create Banners
+    await Banner.create([
+      { title: 'New Season Sale', imageUrl: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8', isActive: true },
+      { title: 'Gadgets Galore', imageUrl: 'https://images.unsplash.com/photo-1498049794561-7780e7231661', isActive: true }
     ]);
 
-    console.log('Database seeded successfully!');
+    // Create Categories for 8 Niches
+    const niches = [
+      { name: 'Shoes', slug: 'shoes' },
+      { name: 'Fashion', slug: 'fashion' },
+      { name: 'Electronics', slug: 'electronics' },
+      { name: 'Grocery', slug: 'grocery' },
+      { name: 'Beauty', slug: 'beauty' },
+      { name: 'Home Decor', slug: 'home-decor' },
+      { name: 'Toys', slug: 'toys' },
+      { name: 'Pets', slug: 'pets' }
+    ];
+
+    const createdCategories = await Category.create(niches);
+
+    // Create Products for each niche
+    const products = [
+      { name: 'Sporty Sneakers', price: 2999, originalPrice: 4999, categoryId: createdCategories[0]._id, slug: 'sporty-sneakers' },
+      { name: 'Cotton T-Shirt', price: 999, originalPrice: 1499, categoryId: createdCategories[1]._id, slug: 'cotton-tshirt' },
+      { name: 'Wireless Earbuds', price: 1999, originalPrice: 3999, categoryId: createdCategories[2]._id, slug: 'wireless-earbuds' },
+      { name: 'Organic Apples', price: 200, originalPrice: 250, categoryId: createdCategories[3]._id, slug: 'organic-apples' },
+      { name: 'Facial Serum', price: 899, originalPrice: 1299, categoryId: createdCategories[4]._id, slug: 'facial-serum' },
+      { name: 'Modern Lamp', price: 1500, originalPrice: 2500, categoryId: createdCategories[5]._id, slug: 'modern-lamp' },
+      { name: 'Action Figure', price: 499, originalPrice: 799, categoryId: createdCategories[6]._id, slug: 'action-figure' },
+      { name: 'Dog Treats', price: 350, originalPrice: 450, categoryId: createdCategories[7]._id, slug: 'dog-treats' }
+    ];
+
+    await Product.create(products.map(p => ({
+      ...p,
+      images: ['https://images.unsplash.com/photo-1505740420928-5e560c06d30e'],
+      isFeatured: true,
+      stock: 20,
+      isActive: true
+    })));
+
+    console.log('Database seeded successfully with 8 niches!');
     process.exit();
   } catch (error) {
     console.error('Error seeding database:', error);
